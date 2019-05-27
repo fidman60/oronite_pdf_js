@@ -1,0 +1,108 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#pdf-loader {
+    display: none;
+    text-align: center;
+    color: #999999;
+    font-size: 13px;
+    line-height: 100px;
+    height: 100px;
+}
+
+#pdf-contents {
+    display: none;
+}
+
+#pdf-meta {
+    overflow: hidden;
+    margin: 0 0 20px 0;
+}
+
+#pdf-buttons {
+    float: left;
+}
+
+#page-count-container {
+    float: right;
+}
+
+#pdf-current-page {
+    display: inline;
+}
+
+#pdf-total-pages {
+    display: inline;
+}
+
+#pdf-canvas {
+    box-sizing: border-box;
+    background-color: #1A1A1A;
+    display: block;
+}
+
+#page-loader {
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    display: none;
+    color: #999999;
+    font-size: 13px;
+}
+
+
+
+/* */
+#toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #555;
+  color: #fff;
+  padding: 0.5em;
+
+}
+
+#toolbar button {
+  color: currentColor;
+  background-color: transparent;
+  font: inherit;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  padding: 0.25em 0.5em;
+}
+
+#toolbar button:hover,
+#toolbar button:focus,
+#page-mode input:hover,
+#page-mode input:focus {
+  color: lightGreen;
+}
+
+/* text selector */
+#text-layer { 
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    opacity: 0.2;
+    line-height: 1.0;
+}
+
+#text-layer > div {
+    color: transparent;
+    position: absolute;
+    white-space: pre;
+    cursor: text;
+    transform-origin: 0% 0%;
+}
+
+@media print {
+  .page-wrapper, #toolbar {
+    display: none;
+  }
+}
