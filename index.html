@@ -3,7 +3,7 @@
     <head>
         
         <meta charset="utf-8"/>
-        
+
         <link rel="stylesheet" href='css/style.css'/>
         <link href="http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
@@ -948,15 +948,36 @@
             <div id="pdf-main-container">
                 <div id="pdf-loader">Loading document...</div>
                 <div id="pdf-contents">
-                    <canvas id="pdf-canvas"></canvas>
+                    <div id="viewerContainer">
+                        <canvas id="pdf-canvas"></canvas>
+                    </div>
                     <div id="text-layer"></div>
                     <div role="toolbar" id="toolbar">
                         <div id="pager">
-                            <button id="pdf-prev" data-pager="prev">prev</button>
-                            <button id="pdf-next" data-pager="next">next</button>
+                            <button id="pdf-prev" data-pager="prev"><i class="fas fa-chevron-circle-left"></i></button>
+                            <button id="pdf-next" data-pager="next"><i class="fas fa-chevron-circle-right"></i></button>
                         </div>
                         <div>
-                            <button onclick=window.print()>Print Page</button>
+                            <button onclick="window.print()" title="Print"><i class="fas fa-print"></i></button>
+                            <span style="display: inline-block;position:relative;">
+                                <div id="searchBlock" style="display: none">
+                                    <input id="searchInput" type="search" placeholder="Search..."/>
+                                    <button onclick="fidman(event)"><i id="searchIcon" class="fas fa-search"></i></button>
+                                    <button onclick="previousSearch(event)" id="previous" title="Previous"><i class="fas fa-chevron-circle-left"></i></button>
+                                    <button onclick="nextSearch(event)" id="next" title="Next"><i class="fas fa-chevron-circle-right"></i></button>
+                                    <span><span id="currentSearchPage">0</span>/<span id="totalSearchPages">0</span></span>
+                                </div>
+                                <button id="searchBtn" title="Search"><i class="fas fa-search"></i></button>
+                            </span>
+                            <button id="zoominbutton" type="button" title="Zoom in"><i class="fas fa-search-plus"></i></button>
+                            <button id="zoomoutbutton" type="button" title="Zoom out"><i class="fas fa-search-minus"></i></button>
+                            <span style="display: inline-block;position:relative;">
+                                <div id="moveToPageBlock" style="display: none;">
+                                    <input id="moveToPageInput" type="text" placeholder="Page no"/>
+                                    <button onclick="moveToPage(event)"><i class="fas fa-search"></i></button>
+                                </div>
+                                <button id="moveToPageBtn" title="Move to page"><i class="far fa-file"></i></button>
+                            </span>
                         </div>
                         <div>
                             <div id="page-count-container">Page <div id="pdf-current-page"></div> of <div id="pdf-total-pages"></div></div>
@@ -969,20 +990,112 @@
 
         <script src="js/script.js" ></script>
         <script>
-            
+
+            var currentSearchPage = document.getElementById("currentSearchPage");
+            var totalSearchPages = document.getElementById("totalSearchPages");
+            var currentSearchPageNo = 1;
+            var searchText = '';
+            var results = [];
+            var searching = false;
+            var indexResult = 0;
             var __PDF_DOC,
                 __CURRENT_PAGE,
                 __TOTAL_PAGES,
                 __PAGE_RENDERING_IN_PROGRESS = 0,
                 __CANVAS = $('#pdf-canvas').get(0),
-                __CANVAS_CTX = __CANVAS.getContext('2d');
+                __CANVAS_CTX = __CANVAS.getContext('2d'),
+                __PDF_SCALE = -1;
+
+            function fidman(event){
+                event.preventDefault();
+
+                if(searching) return;
+
+                searchText = document.getElementById('searchInput').value.toLowerCase().trim();
+
+                results = [];
+                indexResult = 0;
+                if (searchText.length > 1) {
+                    currentSearchPageNo = 0;
+                    const searchIcon = document.getElementById("searchIcon");
+                    searching = true;
+
+                    searchIcon.classList.remove("fa-search");
+                    searchIcon.classList.add("fa-spin","fa-spinner");
+
+                    var promise = new Promise(function (resolve, reject) {
+                        if (__PDF_DOC){
+                            resolve(__PDF_DOC);
+                        } else {
+                            reject(new Error("No no no "));
+                        }
+                    });
+
+                    promise
+                        .then(function (doc) {
+                            for (var i = 1; i <= doc.numPages; i++)
+                                results.push(searchPage(doc, i));
+                            return Promise.all(results);
+                        })
+                        .then(function (newResults) {
+                            results = newResults.filter(function (result) {
+                                return result !== undefined;
+                            });
+                            searching = false;
+                            searchIcon.classList.remove("fa-spin","fa-spinner");
+                            searchIcon.classList.add("fa-search");
+                            if (results.length > 0) {
+                                currentSearchPageNo = 1;
+                                currentSearchPage.innerText = currentSearchPageNo+'';
+                                totalSearchPages.innerText = results.length+'';
+                                showPage(results[0]);
+                            } else {
+                                showPage(__CURRENT_PAGE);
+                                currentSearchPageNo = 0;
+                                currentSearchPage.innerText = currentSearchPageNo+'';
+                                totalSearchPages.innerText = 0+'';
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                    /*
+                    for (let i = 1; i <= __PDF_DOC.numPages; i++){
+                        Promise.resolve(searchPage(__PDF_DOC, i))
+                            .then(function(value){
+                                if(value)
+                                    results.push(value);
+                            });
+                    };
+                    */
+                }
+            }
+            
+            function nextSearch(event){
+                if(event) event.preventDefault();
+                if(results.length > 0)
+                    if(indexResult < results.length - 1){
+                        currentSearchPage.innerText = ++currentSearchPageNo+'';
+                        showPage(results[++indexResult]);
+                    }
+            }
+            
+            function previousSearch(event){
+                event.preventDefault();
+                if(results.length > 0)
+                    if(indexResult > 0){
+                        currentSearchPage.innerText = --currentSearchPageNo+'';
+                        showPage(results[--indexResult]);
+                    }
+            }
 
             showPDF('http://localhost/pdf/ORONITE_Digital_GuideMay2019.pdf');
 
             function showPDF(pdf_url) {
                 $("#pdf-loader").show();
                 
-                PDFJS.getDocument({ url: pdf_url }).then(function(pdf_doc) {
+                PDFJS.getDocument({ url: pdf_url })
+                    .then(function(pdf_doc) {
                     __PDF_DOC = pdf_doc;
                     __TOTAL_PAGES = __PDF_DOC.numPages;
 
@@ -992,14 +1105,14 @@
                     $("#pdf-total-pages").text(__TOTAL_PAGES);
 
                     // Show the first page
-                    showPage(7);
+                    showPage(1);
                 }).catch(function(error) {
                     // If error re-show the upload button
                     $("#pdf-loader").hide();
                     $("#upload-button").show();
 
                     alert(error.message);
-                });;
+                });
             }
 
             function showPage(page_no) {
@@ -1023,13 +1136,15 @@
                     
                     // As the canvas is of a fixed width we need to set the scale of the viewport accordingly
                     __CANVAS.width = $(window).width();
-                    var scale_required = __CANVAS.width / page.getViewport(1).width;
+
+                    if (__PDF_SCALE < 0)
+                        __PDF_SCALE = __CANVAS.width / page.getViewport(1).width;
 
                     // Get viewport of the page at required scale
-                    var viewport = page.getViewport(scale_required);
+                    var viewport = page.getViewport(__PDF_SCALE);
 
                     var canvas = document.getElementById('pdf-canvas');
-                    canvas.width = viewport.width;
+                    canvas.width = viewport.width - 5;
                     canvas.height = viewport.height;
                     //canvas.style.width = "100%";
                     //canvas.style.height = "auto";
@@ -1078,6 +1193,13 @@
                             viewport: viewport,
                             textDivs: []
                         });
+                        
+                        const textLayer = document.getElementById('text-layer');
+                        
+                        if(searchText.length > 0){
+                            const regex = new RegExp(searchText,'ig');
+                            textLayer.innerHTML = textLayer.innerHTML.replace(regex, "<span class='highlight'>"+searchText+"</span>");
+                        }
                     });
                 });
             }
@@ -1094,6 +1216,76 @@
                 if(__CURRENT_PAGE != __TOTAL_PAGES)
                     showPage(++__CURRENT_PAGE);
             });
+            
+            
+            function searchPage(doc, pageNumber) {
+                return doc.getPage(pageNumber).then(function (page) {
+                    return page.getTextContent();
+                }).then(function (content) {
+                    // Search combined text content using regular expression
+                    var text = content.items.map(function (i) { return i.str; }).join('');
+                    var re = new RegExp("(.{0,20})" + searchText + "(.{0,20})", "gi"), m;
+                    var lines = [];
+                    if (m = re.exec(text)) {
+                        return pageNumber;
+                    }
+                    return undefined;
+                });
+            }
+
+            var zoominbutton = document.getElementById("zoominbutton");
+            zoominbutton.onclick = function() {
+                __PDF_SCALE = __PDF_SCALE + 0.25;
+                showPage(__CURRENT_PAGE);
+            };
+
+            var zoomoutbutton = document.getElementById("zoomoutbutton");
+            zoomoutbutton.onclick = function() {
+                if (__PDF_SCALE <= 0.25) {
+                    return;
+                }
+                __PDF_SCALE = __PDF_SCALE - 0.25;
+                showPage(__CURRENT_PAGE);
+            };
+
+            const searchBtn = document.getElementById('searchBtn');
+            const searchBlock = document.getElementById("searchBlock");
+            searchBtn.addEventListener('click',function (e) {
+                e.preventDefault();
+                if (searchBlock.style.display === "flex") {
+                    searchBtn.style.color = "white";
+                    searchBlock.style.display = "none";
+                } else {
+                    moveToPageBtn.style.color = "white";
+                    searchBtn.style.color = "orange";
+                    moveToPageBlock.style.display = "none";
+                    searchBlock.style.display = "flex";
+                }
+            });
+
+            const moveToPageBtn = document.getElementById("moveToPageBtn");
+            const moveToPageBlock = document.getElementById("moveToPageBlock");
+            moveToPageBtn.addEventListener('click',function (e) {
+                e.preventDefault();
+                if (moveToPageBlock.style.display === "flex") {
+                    moveToPageBtn.style.color = "white";
+                    moveToPageBlock.style.display = "none";
+                }
+                else {
+                    searchBtn.style.color = "white";
+                    moveToPageBtn.style.color = "orange";
+                    moveToPageBlock.style.display = "flex";
+                    searchBlock.style.display = "none";
+                }
+            });
+
+            function moveToPage(event) {
+                event.preventDefault();
+
+                const page = parseInt(document.getElementById("moveToPageInput").value);
+                if (page > 0 && page <= __TOTAL_PAGES)
+                    showPage(page);
+            }
 
         </script>
     </body>
