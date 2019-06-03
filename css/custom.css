@@ -43,6 +43,7 @@
     box-sizing: border-box;
     background-color: #1A1A1A;
     display: block;
+    margin: auto;
 }
 
 #page-loader {
@@ -155,11 +156,17 @@ button:hover {
     align-items: space-between;
 }
 
+#canvasTextLayerDiv {
+    position:relative;
+    width: auto;
+    overflow: scroll;
+}
+
 @media print {
     .page-wrapper, #toolbar {
         display: none;
     }
-    #subPdfContents {
-        display: block;
+    #pdf-canvas {
+        width: 100%
     }
 }
