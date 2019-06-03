@@ -948,18 +948,21 @@
             <div id="pdf-main-container">
                 <div id="pdf-loader">Loading document...</div>
                 <div id="pdf-contents">
-                    <div id="viewerContainer">
-                        <canvas id="pdf-canvas"></canvas>
-                    </div>
-                    <div id="text-layer"></div>
-                    <div role="toolbar" id="toolbar">
-                        <div id="pager">
-                            <button id="pdf-prev" data-pager="prev"><i class="fas fa-chevron-circle-left"></i></button>
-                            <button id="pdf-next" data-pager="next"><i class="fas fa-chevron-circle-right"></i></button>
+                    <div id="subPdfContents">
+                        <div id="canvasTextLayerDiv" style="position:relative;width: auto;overflow: scroll">
+                            <div id="viewerContainer">
+                                <canvas style="margin: auto;background:red;" id="pdf-canvas"></canvas>
+                            </div>
+                            <div id="text-layer"></div>
                         </div>
-                        <div>
-                            <button onclick="window.print()" title="Print"><i class="fas fa-print"></i></button>
-                            <span style="display: inline-block;position:relative;">
+                        <div role="toolbar" id="toolbar">
+                            <div id="pager">
+                                <button id="pdf-prev" data-pager="prev"><i class="fas fa-chevron-circle-left"></i></button>
+                                <button id="pdf-next" data-pager="next"><i class="fas fa-chevron-circle-right"></i></button>
+                            </div>
+                            <div>
+                                <button onclick="window.print()" title="Print"><i class="fas fa-print"></i></button>
+                                <span style="display: inline-block;position:relative;">
                                 <div id="searchBlock" style="display: none">
                                     <input id="searchInput" type="search" placeholder="Search..."/>
                                     <button onclick="fidman(event)"><i id="searchIcon" class="fas fa-search"></i></button>
@@ -969,21 +972,22 @@
                                 </div>
                                 <button id="searchBtn" title="Search"><i class="fas fa-search"></i></button>
                             </span>
-                            <button id="zoominbutton" type="button" title="Zoom in"><i class="fas fa-search-plus"></i></button>
-                            <button id="zoomoutbutton" type="button" title="Zoom out"><i class="fas fa-search-minus"></i></button>
-                            <span style="display: inline-block;position:relative;">
+                                <button id="zoominbutton" type="button" title="Zoom in"><i class="fas fa-search-plus"></i></button>
+                                <button id="zoomoutbutton" type="button" title="Zoom out"><i class="fas fa-search-minus"></i></button>
+                                <span style="display: inline-block;position:relative;">
                                 <div id="moveToPageBlock" style="display: none;">
                                     <input id="moveToPageInput" type="text" placeholder="Page no"/>
                                     <button onclick="moveToPage(event)"><i class="fas fa-search"></i></button>
                                 </div>
                                 <button id="moveToPageBtn" title="Move to page"><i class="far fa-file"></i></button>
                             </span>
-                        </div>
-                        <div>
-                            <div id="page-count-container">Page <div id="pdf-current-page"></div> of <div id="pdf-total-pages"></div></div>
+                            </div>
+                            <div>
+                                <div id="page-count-container">Page <div id="pdf-current-page"></div> of <div id="pdf-total-pages"></div></div>
+                            </div>
                         </div>
                     </div>
-                    <div style="margin: 0" id="page-loader">Loading page ...</div>
+                    <div style="margin: 0;" id="page-loader">Loading page ...</div>
                 </div>
             </div>
         </main>
@@ -991,6 +995,7 @@
         <script src="js/script.js" ></script>
         <script>
 
+            var canvasTextLayerDiv = document.getElementById("canvasTextLayerDiv");
             var currentSearchPage = document.getElementById("currentSearchPage");
             var totalSearchPages = document.getElementById("totalSearchPages");
             var currentSearchPageNo = 1;
@@ -1089,7 +1094,7 @@
                     }
             }
 
-            showPDF('http://localhost/pdf/ORONITE_Digital_GuideMay2019.pdf');
+            showPDF('pdf/ORONITE_Digital_GuideMay2019.pdf');
 
             function showPDF(pdf_url) {
                 $("#pdf-loader").show();
@@ -1133,13 +1138,16 @@
 
                 // Fetch the page
                 __PDF_DOC.getPage(page_no).then(function(page) {
-                    
+                    canvasTextLayerDiv.scrollTop = 0;
                     // As the canvas is of a fixed width we need to set the scale of the viewport accordingly
                     __CANVAS.width = $(window).width();
 
-                    if (__PDF_SCALE < 0)
-                        __PDF_SCALE = __CANVAS.width / page.getViewport(1).width;
+                    if (__PDF_SCALE < 0){
+                        __PDF_SCALE = 1.25;
+                        //__PDF_SCALE = __CANVAS.width / page.getViewport(1).width;
+                    }
 
+                    console.log(__PDF_SCALE);
                     // Get viewport of the page at required scale
                     var viewport = page.getViewport(__PDF_SCALE);
 
@@ -1253,10 +1261,10 @@
             searchBtn.addEventListener('click',function (e) {
                 e.preventDefault();
                 if (searchBlock.style.display === "flex") {
-                    searchBtn.style.color = "white";
+                    searchBtn.style.color = "#31353D";
                     searchBlock.style.display = "none";
                 } else {
-                    moveToPageBtn.style.color = "white";
+                    moveToPageBtn.style.color = "#31353D";
                     searchBtn.style.color = "orange";
                     moveToPageBlock.style.display = "none";
                     searchBlock.style.display = "flex";
@@ -1268,11 +1276,11 @@
             moveToPageBtn.addEventListener('click',function (e) {
                 e.preventDefault();
                 if (moveToPageBlock.style.display === "flex") {
-                    moveToPageBtn.style.color = "white";
+                    moveToPageBtn.style.color = "#31353D";
                     moveToPageBlock.style.display = "none";
                 }
                 else {
-                    searchBtn.style.color = "white";
+                    searchBtn.style.color = "#31353D";
                     moveToPageBtn.style.color = "orange";
                     moveToPageBlock.style.display = "flex";
                     searchBlock.style.display = "none";
