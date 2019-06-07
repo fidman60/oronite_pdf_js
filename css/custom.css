@@ -1,5 +1,3 @@
-
-
 * {
     margin: 0;
     padding: 0;
@@ -115,16 +113,12 @@
     align-items: center;
     position: absolute;
     background:rgba(219,129,23,0.8);
-    top:-70px;
-    left: -135px;
-    width: 380px;
+    top:-60px;
+    left: -215px;
+    width: 340px;
     padding: 10px;
 }
 
-#moveToPageBlock{
-    left: -235px;
-    width: 350px;
-}
 
 #searchBlock input,#moveToPageBlock input {
     padding-left: 5px;
@@ -162,7 +156,7 @@ button:hover {
 }
 
 @media print {
-    .page-wrapper, #toolbar {
+    #toolbar, #optionsPane, #left-menu {
         display: none;
     }
     #pdf-canvas {

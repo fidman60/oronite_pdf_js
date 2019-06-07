@@ -3,7 +3,10 @@
     <head>
         
         <meta charset="utf-8"/>
-
+        <title>Chevron Oronite</title>
+        <meta name="pspdf-platform" content="web">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
         <link rel="stylesheet" href='css/style.css'/>
         <link href="http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
@@ -17,933 +20,316 @@
         <script src="js/pdf.worker.js"></script>
         
         <script src="https://raw.githubusercontent.com/mozilla/pdf.js/master/web/ui_utils.js"></script>
+
+
+        <style>
+            #optionsPane a {
+                font-weight: bold;
+                text-decoration: underline;
+                color: black;
+            }
+
+            #optionsPane {
+                text-align: center;
+                font-size: 14px;
+                color: black;
+                padding: 10px;
+            }
+
+            #pagination {
+                margin: 0 15px;
+            }
+
+            #zoominbutton,#zoomoutbutton {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                border: 1px solid;
+            }
+
+            #zoominbutton,#zoomoutbutton,#printBtn,#searchBtn,#moveToPageBtn{
+                background: transparent;
+                font-size: 14px;
+            }
+
+            #printBtn,#searchBtn,#moveToPageBtn{
+                border: none;
+            }
+
+            #pagination select {
+                background: transparent;
+                border: 1px;
+                font-size: 14px;
+                border-radius: 0px;
+            }
+
+            #searchBlock button, #moveToPageBlock button {
+                background-color: transparent;
+                font: inherit;
+                border: 1px solid currentColor;
+                border-radius: 3px;
+                padding: 0.25em 0.5em;
+            }
+
+
+            #mySidenav a {
+                color: white;
+            }
+
+            #left-menu li {
+                color: black;
+            }
+
+            #left-menu{
+                width: 30pt;
+                position: fixed;
+                top: 0;
+                left: 0;
+                transition: all 1s;
+                height: 100vh;
+                background-color: #ff602d;
+                padding: 30pt 2pt;
+                z-index: 9999;
+            }
+            #left-menu:hover{
+                width: 300pt;
+                box-shadow: 18pt 0pt 62pt 1000pt #000000e0;
+            }
+            #left-menu h3{
+                text-align: center;
+                transform: rotate(-90deg);
+                transition: all 1s;
+                color: #fff;
+            }
+            #left-menu:hover h3{
+                transform: rotate(0deg);
+            }
+            #mySidenav {
+                display: none;
+                overflow: scroll;
+                height: 100vh;
+            }
+            #left-menu:hover #mySidenav{
+                display:block;
+            }
+            .li-chap {
+                padding-left: 58px;
+            }
+            li {
+                font-size: 10pt;
+                padding: 5px;
+            }
+            .sidenav a {
+                padding: 8px 8px 8px 32px;
+                text-decoration: none;
+                font-size: 16px;
+                color: #fff;
+                display: block;
+                transition: 0.3s;
+                cursor: pointer;
+            }
+            .s-chap {
+                padding: 0!important;
+                text-decoration: none!important;
+                font-size: 10pt!important;
+                /* color: #000000; */
+                display: block;
+                transition: none!important;
+                color: black!important;
+            }
+
+            @media only screen and (max-width: 500px){
+                div#left-menu {
+                    width: 100vw;
+                    height: auto;
+                    padding: 10pt 2pt;
+                }
+                #left-menu h3 {
+                    height: 30px;
+                    transform: rotate(0);
+                }
+                #pdf-canvas {
+                    margin-top: 30px;
+                }
+
+            }
+
+        </style>
     </head>
     <body>
-        <div class="page-wrapper chiller-theme">
-            <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
-                <i class="fas fa-bars"></i>
-            </a>
-            <nav id="sidebar" class="sidebar-wrapper">
-                <div class="sidebar-content">
-                    <div class="sidebar-brand">
-                        <a href="#">Oronite</a>
-                        <div id="close-sidebar">
-                            <i class="fas fa-times"></i>
-                        </div>
-                    </div>
-                    <!-- sidebar-search  -->
-                    <div class="sidebar-menu">
-                        <ul>
-                            <li class="header-menu">
-                                <span>Chapters</span>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Chapter 1: Viscosity classifcations - SAE J300</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(7);})(event)" href="#">Cover</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(8);})(event)" href="#">SAE J300 revised January 2015 - SAE viscosity grades for engine oils</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Chapter 2: API and ILSAC requirements for gasoline and diesel engine oils API «S» and ILSAC Gasoline service categories engine and laboratory test requirement summ</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(9);})(event)" href="#">Cover</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(10);})(event)" href="#">API “S” and ILSAC gasoline service categories engine and laboratory test requirement summary - Current -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(11);})(event)" href="#">API “S” and ILSAC gasoline service categories engine and laboratory test requirement summary - Obsolete -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(12);})(event)" href="#">API SM, SN, SN + RC gasoline service category laboratory test limits - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(13);})(event)" href="#">API SM, SN, SN + RC gasoline service category laboratory test limits - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(14);})(event)" href="#">API SH, SJ and SL gasoline service category laboratory test limits - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(15);})(event)" href="#">API SH, SJ and SL gasoline service category laboratory test limits - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(16);})(event)" href="#">API “S” gasoline service categories engine test limits - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(17);})(event)" href="#">API “S” gasoline service categories engine test limits - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(18);})(event)" href="#">API “S” gasoline service categories engine test limits - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(19);})(event)" href="#">ILSAC GF-4 & GF-5 standard laboratory test limits - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(20);})(event)" href="#">ILSAC GF-4 & GF-5 standard laboratory test limits - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(21);})(event)" href="#"> ILSAC GF-1, GF-2 and GF-3 standard laboratory test limits</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(22);})(event)" href="#">ILSAC standard engine test limits - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(23);})(event)" href="#">ILSAC standard engine test limits - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(24);})(event)" href="#">ILSAC standard engine test limits - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(25);})(event)" href="#">API “C” diesel service categories engine and laboratory test requirement summary - Current -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(26);})(event)" href="#">API “C” diesel service categories laboratory test limits - Current - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(27);})(event)" href="#">API “C” diesel service categories laboratory test limits - Current - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(28);})(event)" href="#">API “C” diesel service categories engine test limits - Current - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(29);})(event)" href="#">API “C” diesel service categories engine test limits - Current - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(30);})(event)" href="#">API “C” diesel service categories engine test limits - Current - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(31);})(event)" href="#">API “C” diesel service categories engine test limits - Current - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(32);})(event)" href="#">API “C” diesel service categories engine and laboratory test requirement summary - Obsolete -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(33);})(event)" href="#">API “C” diesel service categories engine test limits - Obsolete - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(34);})(event)" href="#">API “C” diesel service categories engine test limits - Obsolete - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(35);})(event)" href="#">API “C” diesel service categories engine test limits - Obsolete - 3 -</a>
-                                        </li>
-                                        
-                                    </ul>
-                                    
-                                </div>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Chapter 3: ACEA sequences for gasoline and diesel engine oils</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(36);})(event)" href="#">Cover</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(37);})(event)" href="#">ACEA sequences - Overview of validity periods</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(38);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(39);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(40);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(41);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(42);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines with after treatment devices</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(43);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines with after treatment devices</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(44);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines with after treatment devices</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(45);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines with after treatment devices</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(46);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for heavy duty diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(47);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for heavy duty diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(48);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for heavy duty diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(49);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for heavy duty diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(50);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(51);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(52);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(53);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(54);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines with after treatment devices</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(55);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines with after treatment devices</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(56);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines with after treatment devices</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(57);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines with after treatment devices</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(58);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for gasoline and diesel engines with after treatment devices</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(59);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for heavy duty diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(60);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for heavy duty diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(61);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for heavy duty diesel engines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(62);})(event)" href="#">ACEA 2016 European oil sequence for service-fill oils for heavy duty diesel engines</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Chapter 4: China GB, Global DHD-1, JASO HD-DL and US Military requirements for diesel engine oils</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(63);})(event)" href="#">Cover</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(64);})(event)" href="#">GB 11121 - 2006 (#) - Passenger car gasoline engine oil - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(65);})(event)" href="#">GB 11121 - 2006 (#) - Passenger car gasoline engine oil - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(66);})(event)" href="#">GB 11122 - 2006 (#) - Heavy duty diesel engine oil - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(67);})(event)" href="#">GB 11122 - 2006 (#) - Heavy duty diesel engine oil - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(68);})(event)" href="#">GLOBAL DHD-1 specification - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(69);})(event)" href="#">GLOBAL DHD-1 specification - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(70);})(event)" href="#">JASO DH-1, DH-2, DH-2F, DL-0, DL-1 specification - Laboratory test - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(71);})(event)" href="#">JASO DH-1, DH-2, DH-2F, DL-0, DL-1 specification - Laboratory test - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(72);})(event)" href="#">JASO DH-1, DH-2, DH-2F, DL-0, DL-1 specification - Engine test - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(73);})(event)" href="#">JASO DH-1, DH-2, DH-2F, DL-0, DL-1 specification - Engine test - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(74);})(event)" href="#">MIL-PRF-2104H specification (2) - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(75);})(event)" href="#">MIL-PRF-2104H specification (2) - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(76);})(event)" href="#">MIL-PRF-2104H specification (2) - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(77);})(event)" href="#">MIL-PRF-2104H specification (2) - 4 -</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Chapter 5: OEM requirements for gasoline and diesel engine oils</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(78);})(event)" href="#">Cover</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(79);})(event)" href="#">BMW Long Life specification overview - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(80);})(event)" href="#">BMW Long Life specification overview - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(81);})(event)" href="#">CATERPILLAR Engine Crankcase Fluid (ECF) recommendations - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(82);})(event)" href="#">CATERPILLAR Engine Crankcase Fluid (ECF) recommendations - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(83);})(event)" href="#">CHRYSLER GROUP LLC requirements – MS-6395 specification</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(84);})(event)" href="#">CUMMINS Engineering Standards (CES) - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(85);})(event)" href="#">CUMMINS Engineering Standards (CES) - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(86);})(event)" href="#">CUMMINS Engineering Standards (CES) - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(87);})(event)" href="#">CUMMINS Engineering Standards (CES) - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(88);})(event)" href="#">CUMMINS Engineering Standards (CES) - 5 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(89);})(event)" href="#">CUMMINS Engineering Standards (CES) - 6 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(90);})(event)" href="#">DETROIT Fluids Specification (DFS) - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(91);})(event)" href="#">DETROIT Fluids Specification (DFS) - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(92);})(event)" href="#">DETROIT Fluids Specification (DFS) - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(93);})(event)" href="#">DETROIT Fluids Specification (DFS) - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(94);})(event)" href="#">DETROIT Fluids Specification (DFS) - 5 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(95);})(event)" href="#">DETROIT Fluids Specification (DFS) - 6 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(96);})(event)" href="#">DEUTZ lubricating oil Quality Classes (DQC) - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(97);})(event)" href="#">DEUTZ lubricating oil Quality Classes (DQC) - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(98);})(event)" href="#">DEUTZ lubricating oil Quality Classes (DQC) - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(99);})(event)" href="#">DEUTZ lubricating oil Quality Classes (DQC) - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(100);})(event)" href="#">FIAT service fill engine oil specifications, conventional SAPS</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(101);})(event)" href="#">FIAT service fill engine oil specifications, mid-SAPS - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(102);})(event)" href="#">FIAT service fill engine oil specifications, mid-SAPS - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(103);})(event)" href="#">FIAT service fill engine oil specifications, mid-SAPS - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(104);})(event)" href="#">FPT Engine Oil Requirements</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(105);})(event)" href="#">FORD MOTOR COMPANY active Ford engine oil specifications - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(106);})(event)" href="#">FORD MOTOR COMPANY active Ford engine oil specifications - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(107);})(event)" href="#">GM engine oil specifications - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(108);})(event)" href="#">GM engine oil specifications - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(109);})(event)" href="#">GM engine oil specifications - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(110);})(event)" href="#">GM engine oil specifications - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(111);})(event)" href="#">GM engine oil specifications - 5 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(112);})(event)" href="#">Jaguar Land Rover Limited engine oil specifications</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(113);})(event)" href="#">MAN works standards - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(114);})(event)" href="#">MAN works standards - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(115);})(event)" href="#">MAN works standards - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(116);})(event)" href="#">MERCEDES-BENZ specifications for passenger car (service fill) V2017.1 - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(117);})(event)" href="#">MERCEDES-BENZ specifications for passenger car (service fill) V2017.1 - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(118);})(event)" href="#">MERCEDES-BENZ specifications for passenger car (service fill) V2017.1 - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(119);})(event)" href="#">MERCEDES-BENZ specifications for passenger car (service fill) V2017.1 - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(120);})(event)" href="#">MERCEDES-BENZ specifications for passenger car (service fill) V2017.1 - 5 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(121);})(event)" href="#">MERCEDES-BENZ specifications for passenger car (service fill) V2017.1 - 6 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(122);})(event)" href="#">MERCEDES-BENZ specifications for passenger car (service fill) V2017.1 - 7 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(123);})(event)" href="#">MERCEDES-BENZ specifications for passenger car (service fill) V2017.1 - 8 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(124);})(event)" href="#">MERCEDES-BENZ specifications for passenger car (service fill) V2017.1 - 9 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(125);})(event)" href="#">MERCEDES-BENZ specifications for heavy duty (service fill) V2017.1 - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(126);})(event)" href="#">MERCEDES-BENZ specifications for heavy duty (service fill) V2017.1 - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(127);})(event)" href="#">MERCEDES-BENZ specifications for heavy duty (service fill) V2017.1 - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(128);})(event)" href="#">MERCEDES-BENZ specifications for heavy duty (service fill) V2017.1 - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(129);})(event)" href="#">MERCEDES-BENZ specifications for heavy duty (service fill) V2017.1 - 5 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(130);})(event)" href="#">MERCEDES-BENZ specifications for heavy duty (service fill) V2017.1 - 6 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(131);})(event)" href="#">MERCEDES-BENZ specifications for heavy duty (service fill) V2017.1 - 7 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(132);})(event)" href="#">MERCEDES-BENZ specifications for heavy duty (service fill) V2017.1 - 8 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(133);})(event)" href="#">MTU diesel engine oil specifications - MTL5044 - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(134);})(event)" href="#">MTU diesel engine oil specifications - MTL5044 - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(135);})(event)" href="#">MTU diesel engine eil specifications - MTL5044 - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(136);})(event)" href="#">MTU diesel engine eil specifications - MTL5044 - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(137);})(event)" href="#">PACCAR DAF engine oil requirements and oil drain intervals</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(138);})(event)" href="#">PORSCHE engine oil requirements</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(139);})(event)" href="#">PSA-PEUGEOT-CITROEN engine oil specifications - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(140);})(event)" href="#">PSA-PEUGEOT-CITROEN engine oil specifications - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(141);})(event)" href="#">PSA-PEUGEOT-CITROEN engine oil specifications - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(142);})(event)" href="#">PSA-PEUGEOT-CITROEN engine oil specifications - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(143);})(event)" href="#">PSA-PEUGEOT-CITROEN engine oil specifications - 5 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(144);})(event)" href="#">PSA-PEUGEOT-CITROEN engine oil specifications - 6 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(145);})(event)" href="#">RENAULT passenger car engine oil requirements - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(146);})(event)" href="#">RENAULT passenger car engine oil requirements - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(147);})(event)" href="#">RENAULT passenger car engine oil requirements - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(148);})(event)" href="#">RENAULT passenger car engine oil requirements - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(149);})(event)" href="#">SCANIA Long Drain Field (LDF) test requirements</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(150);})(event)" href="#">VOLVO CAR CORPORATION engine oil specifications - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(151);})(event)" href="#">VOLVO CAR CORPORATION engine oil specifications - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(152);})(event)" href="#">VOLVO VDS, MACK EO and RENAULT RLD standards - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(153);})(event)" href="#">VOLVO VDS, MACK EO and RENAULT RLD standards - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(154);})(event)" href="#">VOLVO VDS, MACK EO and RENAULT RLD standards - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(155);})(event)" href="#">VOLVO VDS, MACK EO and RENAULT RLD standards - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(156);})(event)" href="#">VOLKSWAGEN engine oil specifications - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(157);})(event)" href="#">VOLKSWAGEN engine oil specifications - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(158);})(event)" href="#">VOLKSWAGEN engine oil specifications - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(159);})(event)" href="#">VOLKSWAGEN engine oil specifications - 4 -</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Chapter 6: ACC, API, ATC and ATIEL codes of practice (CoP)</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(160);})(event)" href="#">Cover</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(161);})(event)" href="#">API and ATIEL base stock categories</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(162);})(event)" href="#">API EOLCS definitions for Base Oil Interchangeability guidelines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(163);})(event)" href="#">ATIEL Code of Practice definitions for base stock interchange guidelines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(164);})(event)" href="#">ATIEL base stock interchange guidelines Use of alternative base stocks in validated formulations</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(165);})(event)" href="#">ACC and ATC guidelines for minor formulation modifications - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(166);})(event)" href="#">ACC and ATC guidelines for minor formulation modifications - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(167);})(event)" href="#">ACC and ATC guidelines for minor formulation modifications - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(168);})(event)" href="#">ACC and ATC guidelines for minor formulation modifications - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(169);})(event)" href="#">ACC guidelines for program guidelines</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(170);})(event)" href="#">ACC and ATC guidelines data required for candidate data packages - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(171);})(event)" href="#">ACC and ATC guidelines data required for candidate data packages - 2 -</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Chapter 7: API guidelines for: - Viscosity grade read-cross (VGRA) - Base oil interchange (BOI)</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(172);})(event)" href="#">Cover</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(173);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(174);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(175);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(176);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(177);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(178);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(179);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(180);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(181);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(182);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(183);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(184);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(185);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(186);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(187);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(188);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(189);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(190);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: viscosity grades read across requirements for formulations containing Group I, II, III and IV base stocks</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(191);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for passenger car motor oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(192);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for passenger car motor oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(193);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for passenger car motor oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(194);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for passenger car motor oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(195);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for passenger car motor oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(196);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for passenger car motor oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(197);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for diesel engine oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(198);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for diesel engine oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(199);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for diesel engine oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(200);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for diesel engine oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(201);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for diesel engine oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(202);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for diesel engine oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(203);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for diesel engine oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(204);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for diesel engine oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(205);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for diesel engine oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(206);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for diesel engine oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(207);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for diesel engine oils</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(208);})(event)" href="#">API 1509 engine oil licensing and certification system guidelines: API base oil interchangeability guidelines for diesel engine oils</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Chapter 8: ATIEL guidelines for: - Viscosity grade read-across (VGRA)- Base oil interchange (BOI) - Viscosity modifier interchange (VMI)</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(210);})(event)" href="#">Cover</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(211);})(event)" href="#">ATIEL viscosity grade read across guidelines - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(212);})(event)" href="#">ATIEL viscosity grade read across guidelines - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(213);})(event)" href="#">ATIEL viscosity grade read across guidelines - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(214);})(event)" href="#">ATIEL viscosity grade read across guidelines - 5 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(215);})(event)" href="#">ATIEL viscosity grade read across guidelines - 6 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(216);})(event)" href="#">ATIEL viscosity grade read across guidelines - 7 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(217);})(event)" href="#">ATIEL viscosity grade read across guidelines - 8 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(218);})(event)" href="#">ATIEL viscosity grade read across guidelines - 9 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(219);})(event)" href="#">ATIEL base oil interchange guidelines for the M271Evo & M111SL</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(220);})(event)" href="#">ATIEL base oil interchange guidelines for the DV6C, DV4TD, TU3M</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(221);})(event)" href="#">ATIEL base oil interchange guidelines for the M111 FE test</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(222);})(event)" href="#">ATIEL base oil interchange guidelines for the OM646LA test</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(223);})(event)" href="#">ATIEL base oil interchange guidelines for the VW TDI, OM646LA Bio, EP6CDT, TU5JP & OM501LA</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(224);})(event)" href="#">ATC viscosity modifier interchange guidelines</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Chapter 9: Tests and engines</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(225);})(event)" href="#">Cover</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(226);})(event)" href="#">Engine test conditions - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(227);})(event)" href="#">Engine test conditions - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(228);})(event)" href="#">Engine test conditions - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(229);})(event)" href="#">Engine test conditions - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(230);})(event)" href="#">Engine test conditions - 5 -</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Chapter  10:  Elastomer compatibility testing</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(231);})(event)" href="#">Cover</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(232);})(event)" href="#">Elastomer compatibility operating conditions and limits - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(233);})(event)" href="#">Elastomer compatibility operating conditions and limits - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(234);})(event)" href="#">Elastomer compatibility operating conditions and limits - 3 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(235);})(event)" href="#">Elastomer compatibility operating conditions and limits - 4 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(236);})(event)" href="#">Elastomer compatibility operating conditions and limits - 5 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(237);})(event)" href="#">Elastomer compatibility operating conditions and limits - 6 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(238);})(event)" href="#">Elastomer compatibility operating conditions and limits - 7 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(239);})(event)" href="#">Elastomer compatibility operating conditions and limits - 8 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(240);})(event)" href="#">Elastomer compatibility operating conditions and limits - 9 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(241);})(event)" href="#">Elastomer compatibility operating conditions and limits - 10 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(242);})(event)" href="#">Elastomer compatibility operating conditions and limits - 11 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(243);})(event)" href="#">Elastomer compatibility operating conditions and limits - 12 -</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Chapter  11:  Elastomer compatibility testing</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(244);})(event)" href="#">Cover</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(245);})(event)" href="#">Approvals and performance recognition - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(246);})(event)" href="#">Approvals and performance recognition - 2 -</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Chapter 12: OEM requirements for natural gas engine oils</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(247);})(event)" href="#">Cover</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(248);})(event)" href="#">Requirements for gas engine oils for busses and trucks - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(249);})(event)" href="#">Requirements for gas engine oils for busses and trucks - 2 -</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Chapter 13:  Unit conversion</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(250);})(event)" href="#">Cover</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(251);})(event)" href="#">Unit conversion tables: Temperature conversion</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(252);})(event)" href="#">Unit conversion tables: Temperature conversion</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(253);})(event)" href="#">Unit conversion tables: Temperature conversion</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(254);})(event)" href="#">Unit conversion tables: Measurement conversion from US to SI units - 1 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(255);})(event)" href="#">Unit conversion tables: Measurement conversion from US to SI units - 2 -</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(256);})(event)" href="#">Unit conversion tables</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="sidebar-dropdown">
-                                <a href="#">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Acronym table</span>
-                                </a>
-                                <div class="sidebar-submenu">
-                                    <ul>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(257);})(event)" href="#">Acronym table</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(258);})(event)" href="#">Acronym table</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(259);})(event)" href="#">Information</a>
-                                        </li>
-                                        <li>
-                                            <a onclick="(function (event){event.preventDefault();showPage(260);})(event)" href="#">Acronym table</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- sidebar-menu  -->
+
+        <div id="left-menu">
+            <h3 style="font-size: 16px">MENU</h3>
+            <div id="mySidenav" class="sidenav">
+                <a onclick="showPage(1)">Page de couverture</a>
+                <a onclick="showPage(7);">Chapter 1: Viscosity classifcations - SAE J300</a>
+                <div class="li-chap">
+                    <ul style="">
+                        <li><a onclick="showPage(8);" class="s-chap">SAE J300 revised January 2015 - SAE viscosity grades for engine oils </a></li>
+                    </ul>
                 </div>
-            </nav> 
+                <a onclick="showPage(9);">Chapter 2: API and ILSAC requirements for gasoline and diesel engine oils</a>
+                <div class="li-chap">
+                    <ul style="">
+                        <li><a class="s-chap">API «S» and ILSAC Gasoline service categories engine and laboratory test requirement summary</a></li>
+                        <li><a onclick="showPage(10);" class="s-chap">- Current</a></li>
+                        <li><a onclick="showPage(11);" class="s-chap">- Obsolete</a></li>
+                        <li><a onclick="showPage(12);" class="s-chap">API SM, SN, SN + RC Gasoline service category laboratory test limits</a></li>
+                        <li><a onclick="showPage(14);" class="s-chap">API SH, SJ and SL Gasoline service category laboratory test limits</a></li>
+                        <li><a onclick="showPage(16);" class="s-chap">API «S» Gasoline service categories engine test limits</a></li>
+                        <li><a onclick="showPage(19);" class="s-chap">ILSAC GF-4 &amp; GF-5 Standard laboratory test limits </a></li>
+                        <li><a onclick="showPage(21);" class="s-chap">ILSAC GF-1, GF-2 and GF-3 Standard laboratory test limits</a></li>
+                        <li><a onclick="showPage(22);" class="s-chap">ILSAC Standards engine test limits</a></li>
+                        <li><a onclick="showPage(25);" class="s-chap">API «C» Diesel service categories engine and laboratory test requirement summary - Current</a></li>
+                        <li><a onclick="showPage(26);" class="s-chap">API «C» Diesel service categories laboratory test limits - Current</a></li>
+                        <li><a onclick="showPage(28);" class="s-chap">API «C» Diesel service categories engine test limits - Current</a></li>
+                        <li><a onclick="showPage(32);" class="s-chap">API «C» Diesel service categories engine and laboratory test requirement summary - Obsolete</a></li>
+                        <li><a onclick="showPage(33);" class="s-chap">API «C» Diesel service categories engine test limits - Obsolete</a></li>
+                    </ul>
+                </div>
+                <a onclick="showPage(36);">Chapter 3: ACEA sequences for gasoline and diesel engine oils</a>
+                <div class="li-chap">
+                    <ul style="">
+                        <li><a onclick="showPage(37);" class="s-chap">ACEA sequences - Overview of validity periods </a></li>
+                        <li><a class="s-chap">ACEA 2016 European oil sequence for service-fll oils</a></li>
+                        <li><a onclick="showPage(38);" class="s-chap">- For gasoline and diesel engines </a></li>
+                        <li><a onclick="showPage(46);" class="s-chap">- For heavy duty diesel engines</a></li>
+                        <li><a class="s-chap">ACEA 2012 European oil sequence for service-fll oils</a></li>
+                        <li><a onclick="showPage(50);" class="s-chap">- For gasoline and diesel engines</a></li>
+                        <li><a onclick="showPage(59);" class="s-chap">- For heavy duty diesel engines</a></li>
+                    </ul>
+                </div>
+                <a onclick="showPage(63);">Chapter 4: China GB, Global DHD-1, JASO HD-DL and US Military requirements for diesel engine oils</a>
+                <div class="li-chap">
+                    <ul style="">
+                        <li><a onclick="showPage(64);" class="s-chap">GB 11121 - 2006 (#) - Passenger car gasoline engine oil</a></li>
+                        <li><a onclick="showPage(66);" class="s-chap">GB 11122 - 2006 (#) - Heavy duty diesel engine oil</a></li>
+                        <li><a onclick="showPage(68);" class="s-chap">GLOBAL DHD-1- specifcation </a></li>
+                        <li><a onclick="showPage(70);" class="s-chap">JASO DH-1, DH-2, DH-2F, DL-0, DL-1 specifcation - Laboratory test</a></li>
+                        <li><a onclick="showPage(72);" class="s-chap">JASO DH-1, DH-2, DH-2F, DL-0, DL-1 specifcation - Engine test</a></li>
+                        <li><a onclick="showPage(74);" class="s-chap">MIL-PRF-2104H specifcation</a></li>
+                    </ul>
+                </div>
+                <a onclick="showPage(78);">Chapter 5: OEM requirements for gasoline and diesel engine oils</a>
+                <div class="li-chap">
+                    <ul style="">
+                        <li><a onclick="showPage(79);" class="s-chap">BMW </a></li>
+                        <li><a onclick="showPage(81);" class="s-chap">CATERPILLAR </a></li>
+                        <li><a onclick="showPage(83);" class="s-chap">CHRYSLER </a></li>
+                        <li><a onclick="showPage(84);" class="s-chap">CUMMINS </a></li>
+                        <li><a onclick="showPage(90);" class="s-chap">DETROIT </a></li>
+                        <li><a onclick="showPage(96);" class="s-chap">DETROIT </a></li>
+                        <li><a onclick="showPage(100);" class="s-chap">FIAT </a></li>
+                        <li><a onclick="showPage(104);" class="s-chap">FPT </a></li>
+                        <li><a onclick="showPage(105);" class="s-chap">FORD </a></li>
+                        <li><a onclick="showPage(107);" class="s-chap">GM </a></li>
+                        <li><a onclick="showPage(112);" class="s-chap">JAGUAR </a></li>
+                        <li><a onclick="showPage(113);" class="s-chap">MAN </a></li>
+                        <li><a onclick="showPage(116);" class="s-chap">MERCEDES-BENZ </a></li>
+                        <li><a onclick="showPage(133);" class="s-chap">MTU </a></li>
+                        <li><a onclick="showPage(137);" class="s-chap">PACCAR DAF </a></li>
+                        <li><a onclick="showPage(138);" class="s-chap">PORSCHE </a></li>
+                        <li><a onclick="showPage(139);" class="s-chap">PSA - PEUGEOT - CITROEN </a></li>
+                        <li><a onclick="showPage(145);" class="s-chap">RENAULT </a></li>
+                        <li><a onclick="showPage(149);" class="s-chap">SCANIA </a></li>
+                        <li><a onclick="showPage(150);" class="s-chap">VOLVO </a></li>
+                        <li><a onclick="showPage(156);" class="s-chap">VOLKSWAGEN </a></li>
+                    </ul>
+                </div>
+                <a onclick="showPage(160);">Chapter 6: ACC, API, ATC and ATIEL codes of practice (CoP)
+                </a>
+                <div class="li-chap">
+                    <ul style="">
+                        <li><a onclick="showPage(161);" class="s-chap">API and ATIEL base stock categories</a></li>
+                        <li><a onclick="showPage(162);" class="s-chap">API EOLCS defnitions for Base Oil Interchangeability guidelines</a></li>
+                        <li><a onclick="showPage(163);" class="s-chap">ATIEL Code of Practice defnitions for base stock interchange guidelines</a></li>
+                        <li><a onclick="showPage(164);" class="s-chap">ATIEL base stock interchange guidelines use of alternative base stocks in validated formulations</a></li>
+                        <li><a onclick="showPage(165);" class="s-chap">ACC and ATC guidelines for minor formulation modifcations</a></li>
+                        <li><a onclick="showPage(169);" class="s-chap">ACC guidelines for program guidelines</a></li>
+                        <li><a onclick="showPage(170);" class="s-chap">ACC and ATC guidelines data required for candidate data packages</a></li>
+                    </ul>
+                </div>
+                <a onclick="showPage(172);">Chapter 7: API guidelines for: <br>
+                    &nbsp; &nbsp; &nbsp; &nbsp; - Viscosity grade read-across (VGRA) <br>
+                    &nbsp; &nbsp; &nbsp; &nbsp; - Base oil interchange (BOI)
+                </a>
+                <div class="li-chap">
+                    <ul style="">
+                        <li><a class="s-chap">API 1509 - Engine Oil Licensing and Certifcation System Guidelines:
+                        </a></li>
+                        <li><a onclick="showPage(173);" class="s-chap">- Viscosity Grades Read Across Requirements for formulations containing Group I, II, III and IV base stocks</a></li>
+                        <li><a onclick="showPage(191);" class="s-chap">API 1509 - Engine Oil Licensing and Certifcation System Guidelines: API Base Oil Interchangeability guidelines for passenger car motor oils</a> </li>
+                        <li><a onclick="showPage(197);" class="s-chap">API 1509 - Engine Oil Licensing and Certifcation System Guidelines: API Base Oil Interchangeability guidelines for diesel engine oils</a></li>
+                    </ul>
+                </div>
+                <a onclick="showPage(209);">Chapter 8: ATIEL guidelines for: <br>
+                    &nbsp; &nbsp; &nbsp; &nbsp; - Viscosity grade read-across (VGRA) <br>
+                    &nbsp; &nbsp; &nbsp; &nbsp; - Base oil interchange (BOI)<br>
+                    &nbsp; &nbsp; &nbsp; &nbsp; - Viscosity modifier interchange
+                </a>
+                <div class="li-chap">
+                    <ul style="">
+                        <li><a onclick="showPage(210);" class="s-chap">ATIEL viscosity grade read across guidelines <br><br>
+                            ATIEL Base oil interchange guideline
+                        </a></li>
+                        <li><a onclick="showPage(219);" class="s-chap">- For the M271Evo &amp; M111SLs</a></li>
+                        <li><a onclick="showPage(220);" class="s-chap">- For the DV6C, DV4TD, TU3M</a> </li>
+                        <li><a onclick="showPage(221);" class="s-chap">- For the M111 FE test</a></li>
+                        <li><a onclick="showPage(222);" class="s-chap">- For the OM646LA test </a></li>
+                        <li><a onclick="showPage(223);" class="s-chap">- For the VW TDI, OM646LA Bio, EP6CDT, TU5JP &amp; OM501LA</a></li>
+                        <li><a onclick="showPage(224);" class="s-chap">ATC viscosity modifier interchange guidelines</a></li>
+                    </ul>
+                </div>
+                <a onclick="showPage(225);">Chapter 9: Tests and engines
+                </a>
+                <div class="li-chap">
+                    <ul style="">
+                        <li><a onclick="showPage(226);" class="s-chap">Engine test conditions
+                        </a></li>
+                    </ul>
+                </div>
+                <a onclick="showPage(231);">Chapter 10: Elastomer compatibility testing
+                </a>
+                <div class="li-chap">
+                    <ul style="">
+                        <li><a onclick="showPage(232);" class="s-chap">Elastomer compatibility operating conditions and limits
+                        </a></li>
+                    </ul>
+                </div>
+                <a onclick="showPage(244);">Chapter 11: Requirements for approvals and performance recognition
+                </a>
+                <div class="li-chap">
+                    <ul style="">
+                        <li><a onclick="showPage(245);" class="s-chap">Approvals and performance recognition
+                        </a></li>
+                    </ul>
+                </div>
+                <a onclick="showPage(247);">Chapter 12: OEM requirements for natural gas engine oils
+                </a>
+                <div class="li-chap">
+                    <ul style="">
+                        <li><a onclick="showPage(248);" class="s-chap">Requirements for gas engine oils for busses and trucks
+                        </a></li>
+                    </ul>
+                </div>
+                <a onclick="showPage(250);">Chapter 13: Unit conversion
+                </a>
+                <div class="li-chap">
+                    <ul style="">
+                        <li><a onclick="showPage(251);" class="s-chap">Unit conversion tables (temperature conversion)
+                        </a></li>
+                        <li><a onclick="showPage(254);" class="s-chap">Measurement conversion from US to SI units
+                        </a></li>
+                        <li><a onclick="showPage(256);" class="s-chap">Decimal inches to millimeters - Millimeters to inches
+                        </a></li>
+                    </ul>
+                </div>
+                <a onclick="showPage(257);">Acronym table
+                </a>
+                <div style="padding-bottom: 82px"></div>
+            </div>
         </div>
+
         <main class="page-content">
             <div id="pdf-main-container">
                 <div id="pdf-loader">Loading document...</div>
@@ -955,36 +341,44 @@
                             </div>
                             <div id="text-layer"></div>
                         </div>
-                        <div role="toolbar" id="toolbar">
-                            <div id="pager">
-                                <button id="pdf-prev" data-pager="prev"><i class="fas fa-chevron-circle-left"></i></button>
-                                <button id="pdf-next" data-pager="next"><i class="fas fa-chevron-circle-right"></i></button>
+
+                        <div id="optionsPane">
+                            <div style="margin-bottom: 10px">
+                                <a href="#" id="pdf-prev" data-pager="prev">Previous</a>
+                                <span id="pagination">
+                                    <span id="pdf-current-page"></span>/<span id="pdf-total-pages"></span>
+                                </span>
+                                <a href="#" id="pdf-next" data-pager="next">Following</a>
                             </div>
                             <div>
-                                <button onclick="window.print()" title="Print"><i class="fas fa-print"></i></button>
-                                <span style="display: inline-block;position:relative;">
-                                <div id="searchBlock" style="display: none">
-                                    <input id="searchInput" type="search" placeholder="Search..."/>
-                                    <button onclick="fidman(event)"><i id="searchIcon" class="fas fa-search"></i></button>
-                                    <button onclick="previousSearch(event)" id="previous" title="Previous"><i class="fas fa-chevron-circle-left"></i></button>
-                                    <button onclick="nextSearch(event)" id="next" title="Next"><i class="fas fa-chevron-circle-right"></i></button>
-                                    <span><span id="currentSearchPage">0</span>/<span id="totalSearchPages">0</span></span>
+                                <button id="zoomoutbutton" type="button" title="Zoom in"><i class="fas fa-minus"></i></button>
+                                <button id="zoominbutton" type="button" title="Zoom out"><i class="fas fa-plus"></i></button>
+                                <select onchange="zoomSelectChange(event)" id="zoomSelect">
+                                    <option value="0.5">10%</option>
+                                    <option value="1">80%</option>
+                                    <option value="1.25" selected="">100%</option>
+                                    <option value="2">150%</option>
+                                </select>
+                                <button id="printBtn" onclick="window.print()" title="Print"><i class="fas fa-print"></i></button>
+                                <div style="display: inline-block;position:relative;">
+                                    <div id="searchBlock" style="display: none">
+                                        <input id="searchInput" type="search" placeholder="Search..."/>
+                                        <button onclick="fidman(event)"><i id="searchIcon" class="fas fa-search"></i></button>
+                                        <button onclick="previousSearch(event)" id="previous" title="Previous"><i class="fas fa-chevron-circle-left"></i></button>
+                                        <button onclick="nextSearch(event)" id="next" title="Next"><i class="fas fa-chevron-circle-right"></i></button>
+                                        <span><span id="currentSearchPage">0</span>/<span id="totalSearchPages">0</span></span>
+                                    </div>
+                                    <button id="searchBtn" title="Search"><i class="fas fa-search"></i></button>
                                 </div>
-                                <button id="searchBtn" title="Search"><i class="fas fa-search"></i></button>
-                            </span>
-                                <button id="zoominbutton" type="button" title="Zoom in"><i class="fas fa-search-plus"></i></button>
-                                <button id="zoomoutbutton" type="button" title="Zoom out"><i class="fas fa-search-minus"></i></button>
-                                <span style="display: inline-block;position:relative;">
-                                <div id="moveToPageBlock" style="display: none;">
-                                    <input id="moveToPageInput" type="text" placeholder="Page no"/>
-                                    <button onclick="moveToPage(event)"><i class="fas fa-search"></i></button>
+                                <div style="display: inline-block;position:relative;">
+                                    <div id="moveToPageBlock" style="display: none;">
+                                        <input id="moveToPageInput" type="text" placeholder="Page no"/>
+                                        <button onclick="moveToPage(event)"><i class="fas fa-search"></i></button>
+                                    </div>
+                                    <button id="moveToPageBtn" title="Move to page"><i class="far fa-file"></i></button>
                                 </div>
-                                <button id="moveToPageBtn" title="Move to page"><i class="far fa-file"></i></button>
-                            </span>
                             </div>
-                            <div>
-                                <div id="page-count-container">Page <div id="pdf-current-page"></div> of <div id="pdf-total-pages"></div></div>
-                            </div>
+
                         </div>
                     </div>
                     <div id="page-loader">Loading page ...</div>
@@ -1009,7 +403,8 @@
                 __PAGE_RENDERING_IN_PROGRESS = 0,
                 __CANVAS = $('#pdf-canvas').get(0),
                 __CANVAS_CTX = __CANVAS.getContext('2d'),
-                __PDF_SCALE = -1;
+                __PDF_SCALE = -1,
+                __DEFAULT_SCALE = 1.25;
 
             function fidman(event){
                 event.preventDefault();
@@ -1064,15 +459,6 @@
                         .catch(function (error) {
                             console.log(error);
                         });
-                    /*
-                    for (let i = 1; i <= __PDF_DOC.numPages; i++){
-                        Promise.resolve(searchPage(__PDF_DOC, i))
-                            .then(function(value){
-                                if(value)
-                                    results.push(value);
-                            });
-                    };
-                    */
                 }
             }
             
@@ -1143,7 +529,7 @@
                     __CANVAS.width = $(window).width();
 
                     if (__PDF_SCALE < 0){
-                        __PDF_SCALE = 1.25;
+                        __PDF_SCALE = __DEFAULT_SCALE;
                         //__PDF_SCALE = __CANVAS.width / page.getViewport(1).width;
                     }
 
@@ -1293,6 +679,13 @@
                 const page = parseInt(document.getElementById("moveToPageInput").value);
                 if (page > 0 && page <= __TOTAL_PAGES)
                     showPage(page);
+            }
+            
+            function zoomSelectChange(event) {
+                console.log(parseFloat(event.target.value));
+
+                __PDF_SCALE = parseFloat(event.target.value);
+                showPage(__CURRENT_PAGE);
             }
 
         </script>
